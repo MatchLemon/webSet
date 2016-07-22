@@ -5,7 +5,7 @@
     <title>Document</title>
    <!--  <script type="text/javascript" src="/vendor/js/jquery.min.js"></script> -->
     <script type="text/javascript">
-        $(function(){
+        window.onload = function(){
             /*var canvas = $("#canvas")[0];*/
             var canvas = document.getElementById('canvas');
             console.log(canvas);
@@ -75,7 +75,7 @@
             init();
             beginDrawBall();
 
-        })
+        }
     </script>
 </head>
 <body>
