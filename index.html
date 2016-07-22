@@ -1,15 +1,85 @@
 <!DOCTYPE html>
-<html lang="en-us">
-  <head>
+<html lang="zh">
+<head>
     <meta charset="UTF-8">
-    <title>小八</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link rel="stylesheet" type="text/css" href="stylesheets/normalize.css" media="screen">
-    <link href='https://fonts.googleapis.com/css?family=Open+Sans:400,700' rel='stylesheet' type='text/css'>
-    <link rel="stylesheet" type="text/css" href="stylesheets/stylesheet.css" media="screen">
-    <link rel="stylesheet" type="text/css" href="stylesheets/github-light.css" media="screen">
-  </head>
-  <body>
-    <h1 align='center'>hello world  小八</h1>
-  </body>
+    <title>Document</title>
+   <!--  <script type="text/javascript" src="/vendor/js/jquery.min.js"></script> -->
+    <script type="text/javascript">
+        $(function(){
+            /*var canvas = $("#canvas")[0];*/
+            var canvas = document.getElementById('canvas');
+            console.log(canvas);
+            var width = canvas.width = window.innerWidth;
+            var height = canvas.height = window.innerHeight;
+            var radius = 20;
+            var ctx=canvas.getContext('2d');
+            ctx.fillStyle='#ea6d9e';
+            var mousedowned = false;
+            var mousePos = {
+                'x':width/2,
+                'y':height/2
+            }
+            function init() {
+                addEventListener ();
+                
+            }
+
+            function beginDrawBall() {
+                ctx.beginPath();
+                ctx.arc(width/2, height/2, radius, 0, Math.PI*2, true);
+                ctx.fill();
+            }
+
+            function DrawBall(center) {
+                ctx.clearRect(0, 0, width, height);
+                ctx.beginPath();
+                ctx.arc(center.x, center.y, radius, 0, Math.PI*2, true);
+                ctx.fill(); 
+            }
+
+
+            function addEventListener() {
+                canvas.addEventListener('touchstart',dragStart);
+                canvas.addEventListener('touchmove',draging);
+                canvas.addEventListener('touchstart',dragEnd);
+
+                canvas.addEventListener('mousedown',dragStart);
+                canvas.addEventListener('mousemove',draging);
+                canvas.addEventListener('mouseup',dragEnd);
+
+
+            }
+
+            function dragStart(e) {
+                mousedowned = true;
+                console.log('start');
+                console.log(e);
+            }
+
+            function draging(e) {
+                if (!mousedowned) {
+                    return;
+                }
+                mousePos.x = e.pageX || e.touches[0].pageX;
+                mousePos.y = e.pageY || e.touches[0].pageY;
+                DrawBall(mousePos);
+                console.log('draging');
+                console.log(e);
+            }
+
+            function dragEnd(e) {
+                 mousedowned = false;
+                console.log('end');
+                console.log(e);
+            }
+            init();
+            beginDrawBall();
+
+        })
+    </script>
+</head>
+<body>
+<canvas id="canvas"  width="100%" height="100%"></canvas>
+    
+</body>
 </html>
