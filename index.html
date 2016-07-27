@@ -3,15 +3,25 @@
 <head>
     <meta charset="UTF-8">
     <title>Document</title>
-   <!--  <script type="text/javascript" src="/vendor/js/jquery.min.js"></script> -->
+    <script type="text/javascript" src="/vendor/js/jquery.min.js"></script>
+    <script type="text/javascript" src="/Tween.js"></script>
+    <style type="text/css">
+        body{
+            padding: 0px;
+            margin: 0px;
+        }
+    </style>
     <script type="text/javascript">
-        window.onload = function(){
-            /*var canvas = $("#canvas")[0];*/
-            var canvas = document.getElementById('canvas');
-            console.log(canvas);
+        $(function(){
+            var canvas = $("#canvas")[0];
+            /*var canvas = document.getElementById('canvas');*/
             var width = canvas.width = window.innerWidth;
             var height = canvas.height = window.innerHeight;
             var radius = 20;
+            var x1, y1, x2, y2, x3, x4, y3, y4,c1x, c1y ;
+            var tween;
+            var bounceTime = 1000;
+            var bounce_animate_type = TWEEN.Easing.Elastic.Out;
             var ctx=canvas.getContext('2d');
             ctx.fillStyle='#ea6d9e';
             var mousedowned = false;
@@ -19,9 +29,60 @@
                 'x':width/2,
                 'y':height/2
             }
+            var centerPos = {
+                'x':width/2,
+                'y':height/2
+            };
             function init() {
                 addEventListener ();
                 
+            }
+
+            function calCo() {
+                angul = Math.atan( (mousePos.x - centerPos.x ) / (mousePos.y - centerPos.y));
+                var y = radius * Math.sin(angul);
+                var x = Math.sqrt(Math.pow(radius, 2) -Math.pow(y, 2));
+                
+                x1 = mousePos.x + x;
+                x2 = mousePos.x - x;
+
+                x3 = centerPos.x + x;
+                x4 = centerPos.x - x;
+
+                y1 = mousePos.y - y;
+                y2 = mousePos.y + y;
+
+                y3 = centerPos.y - y;
+                y4 = centerPos.y + y;
+                
+                 c1x = (x1 + x4) / 2;
+                 c1y = (y1 + y4) / 2;
+
+
+            }
+            function drawBezier() {
+                calCo();
+                ctx.beginPath();
+                ctx.moveTo(x1,y1);
+                ctx.quadraticCurveTo(c1x, c1y, x3,y3);
+                ctx.lineTo(x4,y4);
+                ctx.quadraticCurveTo(c1x, c1y, x2,y2);
+                ctx.lineTo(x1,y1);
+                ctx.fillStyle = '#ea6d9e';
+                ctx.fill();
+
+            }
+            function drawLine() {
+                calCo();
+                ctx.beginPath();
+                ctx.moveTo(x1, y1);
+                ctx.lineTo(x3, y3);
+                ctx.lineTo(x4, y4);
+                ctx.lineTo(x2, y2);
+                ctx.lineTo(x1, y1);
+
+                ctx.strokeStyle = '#444';
+                ctx.fill();
             }
 
             function beginDrawBall() {
@@ -35,6 +96,7 @@
                 ctx.beginPath();
                 ctx.arc(center.x, center.y, radius, 0, Math.PI*2, true);
                 ctx.fill(); 
+                beginDrawBall();
             }
 
 
@@ -63,19 +125,38 @@
                 mousePos.x = e.pageX || e.touches[0].pageX;
                 mousePos.y = e.pageY || e.touches[0].pageY;
                 DrawBall(mousePos);
-                console.log('draging');
-                console.log(e);
+                drawBezier();
             }
 
             function dragEnd(e) {
-                 mousedowned = false;
+                mousedowned = false;
+                tweenAnmial();
                 console.log('end');
                 console.log(e);
             }
             init();
             beginDrawBall();
 
-        }
+            function tweenAnmial() {
+                tween = new TWEEN.Tween(mousePos)
+                    .to(centerPos, bounceTime)
+                    .easing(bounce_animate_type)
+                    .onUpdate(function() {
+                        DrawBall(mousePos);
+                        drawBezier();
+                    })
+                    .onComplete(function() {
+                        cancelAnimationFrame(bounceTimer);
+                    })
+                    .start();
+                bounce();
+            }
+            function bounce(time) {
+                bounceTimer = requestAnimationFrame(bounce);
+                TWEEN.update(time);
+            }
+
+        })
     </script>
 </head>
 <body>
