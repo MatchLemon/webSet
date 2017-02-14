@@ -89,7 +89,7 @@
             point  : point,
             scale  : scale,
             color  : color,
-            radius : 5,
+            radius : 10,
         }
     }
     Seed.prototype = {
